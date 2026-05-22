@@ -1,0 +1,133 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Habit Tracker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Habit Tracker</h1>
+
+    <!-- WEEK NAVIGATION -->
+
+    <div class="nav">
+
+        <a href="/?week={{ week_offset - 1 }}">
+            ⬅ Last Week
+        </a>
+
+        <span>
+            Week: {{ week_key }}
+        </span>
+
+        <a href="/?week={{ week_offset + 1 }}">
+            Next Week ➡
+        </a>
+
+    </div>
+
+    <!-- ADD HABIT -->
+
+    <form action="/add" method="POST">
+
+        <input type="text"
+               name="habit"
+               placeholder="Enter Habit"
+               required>
+
+        <button type="submit">
+            Add
+        </button>
+
+    </form>
+
+    <!-- HEADER -->
+
+    <div class="grid-header">
+
+        <div>Habit</div>
+
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+        <div>Sun</div>
+
+        <div>Action</div>
+
+    </div>
+
+    <!-- HABITS -->
+
+    {% for habit in habits %}
+
+        {% set current = habit.weeks[week_key] %}
+
+        <form action="/update/{{ loop.index0 }}/{{ week_key }}"
+              method="POST">
+
+            <div class="grid-row">
+
+                <!-- HABIT NAME -->
+
+                <div>
+
+                    <input type="text"
+                           name="name"
+                           value="{{ current.name }}">
+
+                </div>
+
+                <!-- DAYS -->
+
+                {% for day in range(7) %}
+
+                <div class="day-box">
+
+                    <input type="checkbox"
+                           name="day{{ day }}"
+
+                           {% if current.days[day] == 1 %}
+                           checked
+                           {% endif %}>
+
+                </div>
+
+                {% endfor %}
+
+                <!-- ACTIONS -->
+
+                <div class="actions">
+
+                    <button type="submit">
+                        Save
+                    </button>
+
+                    <a href="/delete/{{ loop.index0 }}">
+                        Delete
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
